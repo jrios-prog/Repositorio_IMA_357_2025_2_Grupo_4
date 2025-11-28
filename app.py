@@ -6,9 +6,9 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 # nombres de columnas del CSV
-col_topico = "Topico"
-col_titular = "Titular"
-col_cuerpo = "Cuerpo"
+col_topico = "topico"
+col_titular = "titular"
+col_cuerpo = "texto"
 
 
 @st.cache_data
@@ -132,7 +132,7 @@ def main():
             )
             st.write(f"Topico asociado: {topico_parrafo}")
             st.write("Parrafo encontrado:")
-            #st.write(parrafos[indice_mejor_parrafo])
+            # st.write(parrafos[indice_mejor_parrafo])
 
         # documento con mayor suma de frecuencias de tokens de la oracion
         tokens_oracion = re.findall(r"\w+", oracion.lower())
@@ -174,3 +174,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
