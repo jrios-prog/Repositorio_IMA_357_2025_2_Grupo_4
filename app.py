@@ -18,24 +18,6 @@ def cargar_datos():
 
 
 @st.cache_data
-def construir_parrafos(df):
-    parrafos = []
-    meta = []
-    for posicion_doc, (_, fila) in enumerate(df.iterrows()):
-        texto = fila[col_cuerpo]
-        if not isinstance(texto, str):
-            continue
-        partes = re.split(r"\n+", texto)
-        partes = [p.strip() for p in partes if p.strip()]
-        if not partes:
-            partes = [texto.strip()]
-        for p in partes:
-            parrafos.append(p)
-            meta.append({"posicion_doc": posicion_doc})
-    return parrafos, meta
-
-
-@st.cache_data
 def construir_contadores_documentos(df):
     contadores = []
     for _, fila in df.iterrows():
@@ -96,13 +78,18 @@ def main():
             st.table(df_resultado)
 
     # busqueda por oracion
+    # Nota: en P2 el texto se limpia con cleanBodyText, que reemplaza todos los saltos de linea
+    # Por eso aqui cada fila del CSV tiene el cuerpo como un solo bloque de texto
+    # En esta app interpretamos "parrafo del cuerpo" como "texto completo del documento"
     st.write("")
     st.write("Ingrese una oración:")
 
-    oracion = st.text_input("Oración", value="")
+    oracion = st.text_input("Oracion", value="")
 
     if oracion.strip() != "":
-        parrafos, meta = construir_parrafos(df)
+        # usamos directamente los textos del cuerpo como "parrafos"
+        parrafos = df[col_cuerpo].tolist()
+        meta = [{"posicion_doc": i} for i in range(len(parrafos))]
 
         # parrafo mas similar segun similitud coseno
         if not parrafos:
@@ -132,9 +119,9 @@ def main():
             )
             st.write(f"Topico asociado: {topico_parrafo}")
             st.write("Parrafo encontrado:")
-            # st.write(parrafos[indice_mejor_parrafo])
+            st.write(parrafos[indice_mejor_parrafo])
 
-        # documento con mayor suma de frecuencias de tokens de la oracion
+        # documento con mayor suma de frecuencias de los tokens de la oracion
         tokens_oracion = re.findall(r"\w+", oracion.lower())
 
         if tokens_oracion:
@@ -161,8 +148,7 @@ def main():
                 topico_doc = fila_doc.get(col_topico, "")
 
                 st.write(
-                    f"Mayor coincidencia: {int(max_puntaje)} palabras encontradas "
-                    "en el siguiente documento:"
+                    f"Suma de frecuencias de los tokens de la oracion: {int(max_puntaje)}"
                 )
                 st.write(f"Topico: {topico_doc}")
                 st.write(f"Titular: {titular_doc}")
@@ -174,4 +160,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
