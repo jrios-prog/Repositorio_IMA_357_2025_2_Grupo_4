@@ -118,8 +118,8 @@ def main():
                 f"(Similitud: {mejor_similitud:.4f})"
             )
             st.write(f"Topico asociado: {topico_parrafo}")
-            st.write("Parrafo encontrado:")
-            st.write(parrafos[indice_mejor_parrafo])
+            #st.write("Parrafo encontrado:")
+            #st.write(parrafos[indice_mejor_parrafo])
 
         # documento con mayor suma de frecuencias de los tokens de la oracion
         tokens_oracion = re.findall(r"\w+", oracion.lower())
